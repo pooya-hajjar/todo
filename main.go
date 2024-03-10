@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/pooya-hajjar/todo/models"
 	"github.com/pooya-hajjar/todo/router"
 	dotEnv "github.com/pooya-hajjar/todo/utils/dotenv"
 	"log"
+	"os"
 )
 
 var CTX = context.Background()
@@ -19,14 +21,8 @@ func main() {
 
 	models.ConnectToDatabases()
 
-	//col, err := pgx.CollectRows(q, pgx.RowToStructByName[PGClass])
-
-	//trustProxiesErr := app.SetTrustedProxies(nil)
-	//if trustProxiesErr != nil {
-	//	log.Fatalf("error on running app : %s !", trustProxiesErr)
-	//}
-
-	runErr := app.Run(":3000")
+	appPort := fmt.Sprintf(":%s", os.Getenv("APP_PORT"))
+	runErr := app.Run(appPort)
 	if runErr != nil {
 		log.Fatalf("error on running app : %s !", runErr)
 	}
