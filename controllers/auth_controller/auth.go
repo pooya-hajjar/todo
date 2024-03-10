@@ -3,13 +3,14 @@ package authController
 import (
 	"context"
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pooya-hajjar/todo/constants/query"
 	"github.com/pooya-hajjar/todo/models"
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 type LoginBody struct {

@@ -1,10 +1,11 @@
 package models
 
 import (
-	"github.com/redis/go-redis/v9"
 	"log"
 	"os"
 	"sync"
+
+	"github.com/redis/go-redis/v9"
 )
 
 var RedisDb redis.Client

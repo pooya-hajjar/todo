@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/pooya-hajjar/todo/models"
 	"github.com/pooya-hajjar/todo/router"
 	dotEnv "github.com/pooya-hajjar/todo/utils/dotenv"
-	"log"
-	"os"
 )
 
 var CTX = context.Background()
