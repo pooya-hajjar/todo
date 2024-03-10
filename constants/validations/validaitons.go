@@ -1,9 +1,9 @@
 package validations
 
 const (
-	Default  = "فیلد نامعتبر"
-	Required = "این فیلد الزامی است"
-	Min      = "فیلد باید حداقل %s کاراکتر باشد"
-	Max      = "فیلد باید حداکثر %s کاراکتر باشد"
-	Email    = "ایمیل معتبر نیست"
+	Default  = "this field is not valid"
+	Required = "this field is require"
+	Min      = "this field must be at least %s digits long"
+	Max      = "this field must be a maximum of %s digits"
+	Email    = "this email is not valid"
 )

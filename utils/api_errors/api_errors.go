@@ -14,14 +14,6 @@ type ValidationErrors struct {
 	Message string
 }
 
-type ServerErrors struct {
-	Message string
-}
-
-type QueryErrors struct {
-	Message string
-}
-
 func ErrorMessageForTag(tag string, value string) string {
 	switch tag {
 	case "required":
@@ -41,16 +33,19 @@ func ErrorMessageForTag(tag string, value string) string {
 }
 
 func HandleValidationError(ctx *gin.Context, err error) {
-	if err != nil {
-		var ve validator.ValidationErrors
-		if errors.As(err, &ve) {
-			out := make([]ValidationErrors, len(ve))
+	var ve validator.ValidationErrors
 
-			for i, fe := range ve {
-				out[i] = ValidationErrors{fe.Field(), ErrorMessageForTag(fe.Tag(), fe.Param())}
-			}
-			ctx.JSON(http.StatusBadRequest, gin.H{"errors": out})
+	if errors.As(err, &ve) {
+		out := make(map[string]string)
+
+		for _, fe := range ve {
+
+			out[fe.Field()] = ErrorMessageForTag(fe.Tag(), fe.Param())
 		}
+
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": out})
 		return
 	}
+
+	ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": "empty input"})
 }
