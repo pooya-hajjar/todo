@@ -44,7 +44,8 @@ func Signup(ctx *gin.Context) {
 		return
 	}
 
-	insertUserError := models.PostgresDB.QueryRow(context.Background(), query.AddNewUser, signUpBody.UserName, hashedPass, signUpBody.Avatar).Scan()
+	var newUserid int
+	insertUserError := models.PostgresDB.QueryRow(context.Background(), query.AddNewUser, signUpBody.UserName, hashedPass, signUpBody.Avatar).Scan(&newUserid)
 	if insertUserError != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(insertUserError, &pgErr) {
@@ -62,12 +63,23 @@ func Signup(ctx *gin.Context) {
 		}
 	}
 
+	token, err := CreateToken(newUserid)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+		})
+		return
+	}
+
+	SetAuthCookie(ctx, token)
+
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message": "success",
 	})
 }
 
 func SignIn(ctx *gin.Context) {
+
 	var signInBody SignInBody
 
 	validationErr := ctx.ShouldBindJSON(&signInBody)
@@ -76,10 +88,11 @@ func SignIn(ctx *gin.Context) {
 		return
 	}
 
-	var dbPass string
+	var dbId int
 	var dbUsername string
+	var dbPass string
 
-	getUserError := models.PostgresDB.QueryRow(context.Background(), query.GetUser, signInBody.UserName).Scan(&dbUsername, &dbPass)
+	getUserError := models.PostgresDB.QueryRow(context.Background(), query.GetUser, signInBody.UserName).Scan(&dbId, &dbUsername, &dbPass)
 
 	if getUserError != nil {
 
@@ -107,6 +120,16 @@ func SignIn(ctx *gin.Context) {
 		})
 		return
 	}
+
+	token, err := CreateToken(dbId)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+		})
+		return
+	}
+
+	SetAuthCookie(ctx, token)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "success",

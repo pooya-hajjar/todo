@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	authController "github.com/pooya-hajjar/todo/controllers/auth_controller"
+	"github.com/pooya-hajjar/todo/middlewares/permissions"
 )
 
 func Init() *gin.Engine {
@@ -13,8 +14,8 @@ func Init() *gin.Engine {
 	})
 
 	authGroup := rt.Group("auth")
-	tasksGroup := rt.Group("tasks")
-	userGroup := rt.Group("user")
+	tasksGroup := rt.Group("tasks", permissions.CheckUserAccess)
+	userGroup := rt.Group("user", permissions.CheckUserAccess)
 
 	authGroup.POST("signup", authController.Signup)
 	authGroup.POST("signin", authController.SignIn)
