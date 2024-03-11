@@ -9,13 +9,15 @@ import (
 
 func CheckUserAccess(ctx *gin.Context) {
 	token := authController.GetAuthCookie(ctx)
-	_, err := authController.VerifyToken(token)
+	claim, err := authController.VerifyToken(token)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized",
 		})
 		return
 	}
+
+	ctx.Set("user_id", claim.ID)
 
 	ctx.Next()
 }
