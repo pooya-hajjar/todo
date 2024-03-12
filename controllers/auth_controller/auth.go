@@ -30,7 +30,7 @@ type SignInBody struct {
 func Signup(ctx *gin.Context) {
 	var signUpBody SignUpBody
 
-	validationErr := ctx.BindJSON(&signUpBody)
+	validationErr := ctx.ShouldBindJSON(&signUpBody)
 	if validationErr != nil {
 		apiErrors.HandleValidationError(ctx, validationErr)
 		return

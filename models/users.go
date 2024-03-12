@@ -1,7 +1,7 @@
 package models
 
 type Users struct {
-	ID        uint
+	ID        int
 	UserName  string
 	Password  string
 	CreatedAt uint

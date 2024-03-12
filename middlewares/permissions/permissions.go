@@ -17,7 +17,7 @@ func CheckUserAccess(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Set("user_id", claim.ID)
+	ctx.Set("user_id", claim.Id)
 
 	ctx.Next()
 }

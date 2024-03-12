@@ -3,11 +3,10 @@ package apiErrors
 import (
 	"errors"
 	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/pooya-hajjar/todo/constants/validations"
+	"net/http"
 )
 
 type ValidationErrors struct {
@@ -27,6 +26,10 @@ func ErrorMessageForTag(tag string, value string) string {
 
 	case "email":
 		return validations.Email
+	case "gte":
+		return fmt.Sprintf(validations.Gte, value)
+	case "lte":
+		return fmt.Sprintf(validations.Lte, value)
 
 	default:
 		return validations.Default
@@ -48,5 +51,5 @@ func HandleValidationError(ctx *gin.Context, err error) {
 		return
 	}
 
-	ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": "empty input"})
+	ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
 }

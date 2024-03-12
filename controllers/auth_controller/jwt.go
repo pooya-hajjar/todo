@@ -16,23 +16,18 @@ const (
 )
 
 type JwtClaim struct {
-	iss Issuer // issuer : might be app or oauth2
-	id  int    // subject
-	exp int64  // expiry ts
-	iat int64  // issued at ts
+	Iss Issuer `json:"iss"` // issuer : might be app or oauth2
+	Id  int    `json:"id"`  // subject
+	Exp int64  `json:"exp"` // expiry ts
+	Iat int64  `json:"iat"` // issued at ts
 	jwt.RegisteredClaims
 }
 
 func CreateToken(id int) (string, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
-	tokenClaims := JwtClaim{iss: AppIssuer, id: id, exp: time.Now().Add(time.Hour * 24 * 7).Unix(), iat: time.Now().Unix()}
+	tokenClaims := &JwtClaim{Iss: AppIssuer, Id: id, Exp: time.Now().Add(time.Hour * 24 * 7).Unix(), Iat: time.Now().Unix()}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss": tokenClaims.iss,
-		"id":  tokenClaims.id,
-		"exp": tokenClaims.exp,
-		"iat": tokenClaims.iat,
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims)
 
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
@@ -46,6 +41,10 @@ func VerifyToken(tokenString string) (*JwtClaim, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
 
 	token, err := jwt.ParseWithClaims(tokenString, &JwtClaim{}, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("invalid token")
+		}
 		return secretKey, nil
 	})
 	if err != nil {
