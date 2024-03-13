@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype/zeronull"
 	"github.com/pooya-hajjar/todo/constants/query"
@@ -29,11 +28,6 @@ type RenameTaskQueryParam struct {
 
 type UpdateTaskQueryParam struct {
 	Status int `form:"status" binding:"taskStatus"`
-}
-
-func ValidateStatus(fl validator.FieldLevel) bool {
-	status := fl.Field().Interface().(int)
-	return status == -2 || status == -1 || status == 0 || status == 1
 }
 
 func AddTask(ctx *gin.Context) {
