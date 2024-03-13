@@ -3,6 +3,7 @@ package tasksController
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype/zeronull"
@@ -11,6 +12,7 @@ import (
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	responseHelper "github.com/pooya-hajjar/todo/utils/response_helper"
 	"net/http"
+	"strconv"
 )
 
 type AddTaskBody struct {
@@ -100,6 +102,59 @@ func GetTasks(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"tasks": tasks,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"message": "server error",
+	})
+}
+
+func GetTask(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		fmt.Println("yo")
+		taskId := ctx.Param("id")
+		taskIdInt, convertIdErr := strconv.Atoi(taskId)
+		if convertIdErr != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "task id should be number",
+			})
+		}
+		fmt.Println("yo2")
+
+		getTaskQ := models.PostgresDB.QueryRow(context.Background(), query.GetTask, taskIdInt, userId)
+
+		fmt.Println("yo3")
+		taskMap := make(map[string]interface{})
+
+		var task models.Tasks
+		scanErr := getTaskQ.Scan(&task.Title, &task.CreatedAt, &task.UpdatedAt, &task.Priority, &task.Status, &task.StartTime, &task.EndTime)
+		if scanErr != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(scanErr, &pgErr) {
+
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": pgErr.Message,
+				})
+				return
+			}
+			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": scanErr.Error(),
+			})
+			return
+		}
+
+		taskMap["title"] = task.Title
+		taskMap["created_at"] = responseHelper.NilOrValue(task.CreatedAt)
+		taskMap["updated_at"] = responseHelper.NilOrValue(task.UpdatedAt)
+		taskMap["priority"] = responseHelper.NilOrValue(task.Priority)
+		taskMap["status"] = task.Status
+		taskMap["start_time"] = responseHelper.NilOrValue(task.StartTime)
+		taskMap["end_time"] = responseHelper.NilOrValue(task.EndTime)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"task": taskMap,
 		})
 		return
 	}

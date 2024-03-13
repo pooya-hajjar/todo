@@ -23,7 +23,7 @@ func Init() *gin.Engine {
 
 	tasksGroup.POST("/add", tasksController.AddTask)
 	tasksGroup.GET("/get", tasksController.GetTasks)
-	tasksGroup.PATCH("/:task-id")
+	tasksGroup.GET("/get/:id", tasksController.GetTask)
 
 	userGroup.GET("/:user-id")
 	userGroup.GET("/search/:user-id")
