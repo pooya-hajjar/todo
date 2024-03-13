@@ -113,7 +113,6 @@ func GetTasks(ctx *gin.Context) {
 
 func GetTask(ctx *gin.Context) {
 	if userId, exist := ctx.Get("user_id"); exist {
-		fmt.Println("yo")
 		taskId := ctx.Param("id")
 		taskIdInt, convertIdErr := strconv.Atoi(taskId)
 		if convertIdErr != nil {
@@ -121,11 +120,9 @@ func GetTask(ctx *gin.Context) {
 				"message": "task id should be number",
 			})
 		}
-		fmt.Println("yo2")
 
 		getTaskQ := models.PostgresDB.QueryRow(context.Background(), query.GetTask, taskIdInt, userId)
 
-		fmt.Println("yo3")
 		taskMap := make(map[string]interface{})
 
 		var task models.Tasks
@@ -155,6 +152,44 @@ func GetTask(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"task": taskMap,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"message": "server error",
+	})
+}
+
+func DeleteTask(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		taskId := ctx.Param("id")
+		taskIdInt, convertIdErr := strconv.Atoi(taskId)
+		if convertIdErr != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "task id should be number",
+			})
+		}
+
+		getTaskQ, deleteTaskErr := models.PostgresDB.Exec(context.Background(), query.DeleteTask, taskIdInt, userId)
+
+		if deleteTaskErr != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(deleteTaskErr, &pgErr) {
+
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": pgErr.Message,
+				})
+				return
+			}
+			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": deleteTaskErr.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf("%d task deleted", getTaskQ.RowsAffected()),
 		})
 		return
 	}

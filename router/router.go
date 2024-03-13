@@ -24,6 +24,7 @@ func Init() *gin.Engine {
 	tasksGroup.POST("/add", tasksController.AddTask)
 	tasksGroup.GET("/get", tasksController.GetTasks)
 	tasksGroup.GET("/get/:id", tasksController.GetTask)
+	tasksGroup.DELETE("/delete/:id", tasksController.DeleteTask)
 
 	userGroup.GET("/:user-id")
 	userGroup.GET("/search/:user-id")
