@@ -1,8 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	tasksController "github.com/pooya-hajjar/todo/controllers/tasks_controller"
+	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	"log"
 	"os"
 
@@ -11,14 +12,18 @@ import (
 	dotEnv "github.com/pooya-hajjar/todo/utils/dotenv"
 )
 
-var CTX = context.Background()
-
 func init() {
 	dotEnv.Load()
 }
 
 func main() {
 	app := router.Init()
+
+	cvs := []apiErrors.CustomValidator{
+		apiErrors.CustomValidator{Tag: "taskStatus", Handler: tasksController.StatusValidator},
+	}
+
+	apiErrors.RegisterCustomValidator(cvs...)
 
 	models.ConnectToDatabases()
 

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype/zeronull"
 	"github.com/pooya-hajjar/todo/constants/query"
@@ -20,6 +21,19 @@ type AddTaskBody struct {
 	Priority  int    `json:"priority,omitempty" binding:"omitempty,gte=1,lte=100"`
 	StartTime string `json:"start_time,omitempty" binding:"omitempty,datetime=2006-01-02 15:04"`
 	EndTime   string `json:"end_time,omitempty" binding:"omitempty,datetime=2006-01-02 15:04"`
+}
+
+type RenameTaskQueryParam struct {
+	Title string `form:"title" binding:"required,min=3,max=50"`
+}
+
+type UpdateTaskQueryParam struct {
+	Status int `form:"status" binding:"taskStatus"`
+}
+
+func ValidateStatus(fl validator.FieldLevel) bool {
+	status := fl.Field().Interface().(int)
+	return status == -2 || status == -1 || status == 0 || status == 1
 }
 
 func AddTask(ctx *gin.Context) {
@@ -190,6 +204,94 @@ func DeleteTask(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": fmt.Sprintf("%d task deleted", getTaskQ.RowsAffected()),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"message": "server error",
+	})
+}
+
+func RenameTask(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		taskId := ctx.Param("id")
+		taskIdInt, convertIdErr := strconv.Atoi(taskId)
+		if convertIdErr != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "task id should be number",
+			})
+		}
+		var queries RenameTaskQueryParam
+		validationErr := ctx.ShouldBindQuery(&queries)
+		if validationErr != nil {
+			apiErrors.HandleValidationError(ctx, validationErr)
+			return
+		}
+
+		getTaskQ, deleteTaskErr := models.PostgresDB.Exec(context.Background(), query.RenameTask, queries.Title, taskIdInt, userId)
+
+		if deleteTaskErr != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(deleteTaskErr, &pgErr) {
+
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": pgErr.Message,
+				})
+				return
+			}
+			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": deleteTaskErr.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf("%d task updated", getTaskQ.RowsAffected()),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"message": "server error",
+	})
+}
+
+func UpdateTask(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		taskId := ctx.Param("id")
+		taskIdInt, convertIdErr := strconv.Atoi(taskId)
+		if convertIdErr != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "task id should be number",
+			})
+		}
+		var queries UpdateTaskQueryParam
+		validationErr := ctx.ShouldBindQuery(&queries)
+		if validationErr != nil {
+			apiErrors.HandleValidationError(ctx, validationErr)
+			return
+		}
+
+		getTaskQ, deleteTaskErr := models.PostgresDB.Exec(context.Background(), query.UpdateTask, queries.Status, taskIdInt, userId)
+
+		if deleteTaskErr != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(deleteTaskErr, &pgErr) {
+
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": pgErr.Message,
+				})
+				return
+			}
+			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+				"message": deleteTaskErr.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf("%d task updated", getTaskQ.RowsAffected()),
 		})
 		return
 	}
