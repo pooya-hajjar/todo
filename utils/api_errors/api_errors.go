@@ -24,13 +24,19 @@ func ErrorMessageForTag(tag string, value string) string {
 		return fmt.Sprintf(validations.Min, value)
 	case "max":
 		return fmt.Sprintf(validations.Max, value)
-
-	case "email":
-		return validations.Email
 	case "gte":
 		return fmt.Sprintf(validations.Gte, value)
 	case "lte":
 		return fmt.Sprintf(validations.Lte, value)
+
+	case "email":
+		return validations.Email
+
+	case "datetime":
+		return fmt.Sprintf(validations.DateTime, value)
+		
+	case "taskStatus":
+		return validations.TaskStatus
 
 	default:
 		return validations.Default
