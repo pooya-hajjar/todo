@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype/zeronull"
@@ -11,8 +14,6 @@ import (
 	"github.com/pooya-hajjar/todo/models"
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	responseHelper "github.com/pooya-hajjar/todo/utils/response_helper"
-	"net/http"
-	"strconv"
 )
 
 type AddTaskBody struct {

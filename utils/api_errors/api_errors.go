@@ -3,10 +3,11 @@ package apiErrors
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/pooya-hajjar/todo/constants/validations"
-	"net/http"
 )
 
 type ValidationErrors struct {

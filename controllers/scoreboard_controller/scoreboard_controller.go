@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pooya-hajjar/todo/constants/query"
 	"github.com/pooya-hajjar/todo/models"
-	"net/http"
 )
 
 type TopTenUsers struct {

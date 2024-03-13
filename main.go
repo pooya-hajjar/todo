@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	tasksController "github.com/pooya-hajjar/todo/controllers/tasks_controller"
-	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	"log"
 	"os"
+
+	tasksController "github.com/pooya-hajjar/todo/controllers/tasks_controller"
+	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 
 	"github.com/pooya-hajjar/todo/models"
 	"github.com/pooya-hajjar/todo/router"
@@ -20,7 +21,7 @@ func main() {
 	app := router.Init()
 
 	cvs := []apiErrors.CustomValidator{
-		apiErrors.CustomValidator{Tag: "taskStatus", Handler: tasksController.StatusValidator},
+		{Tag: "taskStatus", Handler: tasksController.StatusValidator},
 	}
 
 	apiErrors.RegisterCustomValidator(cvs...)
