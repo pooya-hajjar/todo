@@ -3,8 +3,8 @@ package models
 import "database/sql"
 
 type Tasks struct {
-	ID        uint          `json:"id"`
-	UserID    uint          `json:"user_id"`
+	ID        int           `json:"id"`
+	UserID    int           `json:"user_id"`
 	Title     string        `json:"title"`
 	CreatedAt sql.NullTime  `json:"created_at"`
 	UpdatedAt sql.NullTime  `json:"updated_at"`

@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype/zeronull"
 	"github.com/pooya-hajjar/todo/constants/query"
 	"github.com/pooya-hajjar/todo/models"
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
+	responseHelper "github.com/pooya-hajjar/todo/utils/response_helper"
 	"net/http"
 )
 
@@ -24,7 +24,7 @@ func AddTask(ctx *gin.Context) {
 	if userId, exist := ctx.Get("user_id"); exist {
 		var addTaskBody AddTaskBody
 
-		validationErr := ctx.BindJSON(&addTaskBody)
+		validationErr := ctx.ShouldBindJSON(&addTaskBody)
 		if validationErr != nil {
 			apiErrors.HandleValidationError(ctx, validationErr)
 			return
@@ -75,19 +75,33 @@ func GetTasks(ctx *gin.Context) {
 			}
 		}
 
-		tasks, collectErr := pgx.CollectRows(getTasksQ, pgx.RowToStructByName[models.Tasks])
-		if collectErr != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-				"message": collectErr.Error(),
-			})
-			return
+		var tasks []map[string]interface{}
+		for getTasksQ.Next() {
+			var task models.Tasks
+			scanErr := getTasksQ.Scan(&task.Title, &task.CreatedAt, &task.UpdatedAt, &task.Priority, &task.Status, &task.StartTime, &task.EndTime)
+			if scanErr != nil {
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": scanErr.Error(),
+				})
+				return
+			}
+
+			taskMap := make(map[string]interface{})
+			taskMap["title"] = task.Title
+			taskMap["created_at"] = responseHelper.NilOrValue(task.CreatedAt)
+			taskMap["updated_at"] = responseHelper.NilOrValue(task.UpdatedAt)
+			taskMap["priority"] = responseHelper.NilOrValue(task.Priority)
+			taskMap["status"] = task.Status
+			taskMap["start_time"] = responseHelper.NilOrValue(task.StartTime)
+			taskMap["end_time"] = responseHelper.NilOrValue(task.EndTime)
+
+			tasks = append(tasks, taskMap)
 		}
 
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"tasks": tasks,
 		})
 		return
-
 	}
 
 	ctx.JSON(http.StatusInternalServerError, gin.H{
