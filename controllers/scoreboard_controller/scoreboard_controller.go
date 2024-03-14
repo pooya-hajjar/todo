@@ -3,7 +3,6 @@ package scoreboardController
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +43,6 @@ func Top10(ctx *gin.Context) {
 			})
 			return
 		}
-		fmt.Println(ttu)
 
 		user["username"] = ttu.UserName
 		user["completed_task"] = ttu.CompletedTasks

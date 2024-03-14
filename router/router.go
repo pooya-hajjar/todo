@@ -22,6 +22,8 @@ func Init() *gin.Engine {
 
 	authGroup.POST("signup", authController.Signup)
 	authGroup.POST("signin", authController.SignIn)
+	authGroup.GET("/google-login", authController.GoogleLogin)
+	authGroup.GET("/google-callback", authController.GoogleCallback)
 
 	tasksGroup.POST("/add", tasksController.AddTask)
 	tasksGroup.GET("/get", tasksController.GetTasks)
@@ -34,7 +36,7 @@ func Init() *gin.Engine {
 	userGroup.PUT("/update", userController.UpdateUser)
 	userGroup.GET("/search/:id", userController.SearchUser)
 
-	rt.GET("/top_ten", scoreboardController.Top10)
+	rt.GET("/top_ten", permissions.CheckUserAccess, scoreboardController.Top10)
 
 	return rt
 }

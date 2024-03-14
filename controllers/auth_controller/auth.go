@@ -63,7 +63,7 @@ func Signup(ctx *gin.Context) {
 		}
 	}
 
-	token, err := CreateToken(newUserid)
+	token, err := CreateToken(newUserid, AppIssuer)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized",
@@ -121,7 +121,7 @@ func SignIn(ctx *gin.Context) {
 		return
 	}
 
-	token, err := CreateToken(dbId)
+	token, err := CreateToken(dbId, AppIssuer)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized",

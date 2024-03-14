@@ -23,9 +23,9 @@ type JwtClaim struct {
 	jwt.RegisteredClaims
 }
 
-func CreateToken(id int) (string, error) {
+func CreateToken(id int, iss Issuer) (string, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
-	tokenClaims := &JwtClaim{Iss: AppIssuer, Id: id, Exp: time.Now().Add(time.Hour * 24 * 7).Unix(), Iat: time.Now().Unix()}
+	tokenClaims := &JwtClaim{Iss: iss, Id: id, Exp: time.Now().Add(time.Hour * 24 * 7).Unix(), Iat: time.Now().Unix()}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims)
 

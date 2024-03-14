@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/pooya-hajjar/todo/config"
 	"log"
 	"os"
 
@@ -19,6 +20,8 @@ func init() {
 
 func main() {
 	app := router.Init()
+
+	config.GoogleConfig()
 
 	cvs := []apiErrors.CustomValidator{
 		{Tag: "taskStatus", Handler: tasksController.StatusValidator},
