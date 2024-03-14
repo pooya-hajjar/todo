@@ -23,3 +23,5 @@ CREATE TABLE tasks(
     end_time TIMESTAMP WITH TIME ZONE ,
     CONSTRAINT check_times CHECK((start_time IS NOT NULL AND end_time IS NOT NULL) OR (start_time IS NULL AND end_time IS NULL))
 );
+
+CREATE INDEX tasks_user_id_idx ON tasks (user_id);
