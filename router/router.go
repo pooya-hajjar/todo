@@ -30,9 +30,9 @@ func Init() *gin.Engine {
 	tasksGroup.PATCH("/rename/:id", tasksController.RenameTask)
 	tasksGroup.PATCH("/update/:id", tasksController.UpdateTask)
 
-	userGroup.GET("/info", userController.UserInfo)
-	userGroup.PUT("/update")
-	userGroup.GET("/search/:user-id")
+	userGroup.GET("/info", userController.ThisUserInfo)
+	userGroup.PUT("/update", userController.UpdateUser)
+	userGroup.GET("/search/:id", userController.SearchUser)
 
 	rt.GET("/top_ten", scoreboardController.Top10)
 

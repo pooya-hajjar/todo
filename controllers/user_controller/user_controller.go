@@ -3,7 +3,10 @@ package userController
 import (
 	"context"
 	"errors"
+	"fmt"
+	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -12,46 +15,117 @@ import (
 	responseHelper "github.com/pooya-hajjar/todo/utils/response_helper"
 )
 
-func UserInfo(ctx *gin.Context) {
-	if userId, exist := ctx.Get("user_id"); exist {
+type updateUserBody struct {
+	UserName string `json:"username" binding:"required,min=3,max=100"`
+	Email    string `json:"email,omitempty" binding:"omitempty,email"`
+	Avatar   string `json:"avatar,omitempty" binding:"omitempty,max=255"`
+	Status   int    `json:"status" binding:"taskStatus"`
+}
 
-		getUserInfoQ := models.PostgresDB.QueryRow(context.Background(), query.UserInfo, userId)
+func UserInfo(ctx *gin.Context, userId int) {
 
-		user := struct {
-			TotalTasks int `json:"total_tasks"`
-			TodayTasks int `json:"today_tasks"`
-			models.Users
-		}{}
+	getUserInfoQ := models.PostgresDB.QueryRow(context.Background(), query.UserInfo, userId)
 
-		scanErr := getUserInfoQ.Scan(&user.UserName, &user.Email, &user.Status, &user.Avatar, &user.TotalTasks, &user.TodayTasks)
-		if scanErr != nil {
-			var pgErr *pgconn.PgError
-			if errors.As(scanErr, &pgErr) {
-				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-					"message": pgErr.Message,
-				})
-				return
-			}
+	user := struct {
+		TotalTasks int `json:"total_tasks"`
+		TodayTasks int `json:"today_tasks"`
+		models.Users
+	}{}
 
+	scanErr := getUserInfoQ.Scan(&user.UserName, &user.Email, &user.Status, &user.Avatar, &user.TotalTasks, &user.TodayTasks)
+	if scanErr != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(scanErr, &pgErr) {
 			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-				"message": scanErr.Error(),
+				"message": pgErr.Message,
 			})
 			return
 		}
-		userInfoMap := make(map[string]interface{})
 
-		userInfoMap["username"] = user.UserName
-		userInfoMap["status"] = user.Status
-		userInfoMap["total_tasks"] = user.TotalTasks
-		userInfoMap["today_tasks"] = user.TodayTasks
-		userInfoMap["email"] = responseHelper.NilOrValue(user.Email)
-		userInfoMap["avatar"] = responseHelper.NilOrValue(user.Avatar)
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"message": scanErr.Error(),
+		})
+		return
+	}
+	userInfoMap := make(map[string]interface{})
 
-		ctx.JSON(http.StatusOK, userInfoMap)
+	userInfoMap["username"] = user.UserName
+	userInfoMap["status"] = user.Status
+	userInfoMap["total_tasks"] = user.TotalTasks
+	userInfoMap["today_tasks"] = user.TodayTasks
+	userInfoMap["email"] = responseHelper.NilOrValue(user.Email)
+	userInfoMap["avatar"] = responseHelper.NilOrValue(user.Avatar)
+
+	ctx.JSON(http.StatusOK, userInfoMap)
+	return
+}
+
+func ThisUserInfo(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		if userIdInt, ok := userId.(int); ok {
+			UserInfo(ctx, userIdInt)
+			return
+		}
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "user id should be number",
+		})
+	}
+
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"message": "server error",
+	})
+}
+
+func SearchUser(ctx *gin.Context) {
+	if userId := ctx.Param("id"); userId != "" {
+		if userIdInt, err := strconv.Atoi(userId); err == nil {
+			UserInfo(ctx, userIdInt)
+			return
+		}
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "user id should be number",
+		})
 		return
 	}
 
 	ctx.JSON(http.StatusInternalServerError, gin.H{
 		"message": "server error",
 	})
+}
+
+func UpdateUser(ctx *gin.Context) {
+	if userId, exist := ctx.Get("user_id"); exist {
+		if userIdInt, ok := userId.(int); ok {
+			var updateBody updateUserBody
+			validationErr := ctx.ShouldBindJSON(&updateBody)
+			if validationErr != nil {
+				apiErrors.HandleValidationError(ctx, validationErr)
+				return
+			}
+			updateUserQ, updateUserErr := models.PostgresDB.Exec(context.Background(), query.UpdateUser, userIdInt, updateBody.UserName, updateBody.Email, updateBody.Status, updateBody.Avatar)
+			if updateUserErr != nil {
+				var pgErr *pgconn.PgError
+				if errors.As(updateUserErr, &pgErr) {
+					ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+						"message": pgErr.Message,
+					})
+					return
+				}
+
+				ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+					"message": updateUserErr.Error(),
+				})
+				return
+			}
+
+			ctx.JSON(http.StatusOK, gin.H{
+				"message": fmt.Sprintf("%d user updated", updateUserQ.RowsAffected()),
+			})
+			return
+		}
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "user id should be number",
+		})
+
+	}
 }
