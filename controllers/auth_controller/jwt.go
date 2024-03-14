@@ -56,8 +56,16 @@ func VerifyToken(tokenString string) (*JwtClaim, error) {
 	}
 
 	if claims, ok := token.Claims.(*JwtClaim); ok {
-		return claims, nil
+		if checkTokenExpiry(claims.Exp) {
+			return claims, nil
+		}
 	}
 
 	return nil, errors.New("invalid token")
+}
+
+func checkTokenExpiry(exp int64) bool {
+	now := time.Now().Unix()
+
+	return now < exp
 }

@@ -11,10 +11,9 @@ func CheckUserAccess(ctx *gin.Context) {
 	token := authController.GetAuthCookie(ctx)
 	claim, err := authController.VerifyToken(token)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized",
 		})
-		return
 	}
 
 	ctx.Set("user_id", claim.Id)
