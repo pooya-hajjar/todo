@@ -35,5 +35,25 @@ go mod tidy
 go run ./main.go
 ```
 
+
+## Document
+````
+GET    /   
+POST   /auth/signup                          username:string password:string avatar?:string
+POST   /auth/signin                          username:string password:string
+POST   /auth/google-login      
+POST   /auth/google-callback   
+GET    /user/info                
+GET    /user/search/:id      
+PUT    /user/update                          username:string password:string avatar?:string status?:int  
+GET    /top_ten      
+GET    /tasks/get               
+GET    /tasks/get/:id                        
+POST   /tasks/add                            title:string priority?:int start_date?:datetime end_date?:datetime 
+DELETE /tasks/delete/:id        
+PATCH  /tasks/rename/:id                     ?title=string        
+PATCH  /tasks/update/:id                     ?status=int   
+````
+
 ## todo
 - [ ] add cache system
