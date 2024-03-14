@@ -6,7 +6,7 @@ func ConnectToDatabases() {
 	//? Connecting to databases simultaneously
 	var connectToDatabasesWG sync.WaitGroup
 
-	connectToDatabasesWG.Add(2)
+	connectToDatabasesWG.Add(1)
 
 	go ConnectToPostgres(&connectToDatabasesWG)
 	// go ConnectToRedis(&connectToDatabasesWG)
