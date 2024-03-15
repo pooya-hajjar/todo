@@ -9,7 +9,9 @@ import (
 	"slices"
 )
 
-var UsersIndex redisearch.Client
+const scoreBoardIndexName = "idx:scoreboard"
+
+var ScoreBoardIndex redisearch.Client
 
 func connectToRedisSearch() {
 	redisURL := os.Getenv("REDIS_URL")
@@ -22,25 +24,23 @@ func connectToRedisSearch() {
 
 	redisAddr := fmt.Sprintf("%s:%s", parsedURL.Hostname(), parsedURL.Port())
 
-	client := redisearch.NewClient(redisAddr, "idx:users")
+	client := redisearch.NewClient(redisAddr, scoreBoardIndexName)
 
 	schema := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewTextFieldOptions("username", redisearch.TextFieldOptions{Weight: 3.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("avatar", redisearch.TextFieldOptions{Weight: 1.0})).
-		AddField(redisearch.NewNumericFieldOptions("status", redisearch.NumericFieldOptions{Sortable: true})).
-		AddField(redisearch.NewNumericFieldOptions("total_tasks", redisearch.NumericFieldOptions{Sortable: true})).
-		AddField(redisearch.NewNumericFieldOptions("today_tasks", redisearch.NumericFieldOptions{Sortable: true}))
+		AddField(redisearch.NewTextFieldOptions("username", redisearch.TextFieldOptions{Weight: 3, Sortable: false})).
+		AddField(redisearch.NewTextFieldOptions("avatar", redisearch.TextFieldOptions{Weight: 0.5, Sortable: false})).
+		AddField(redisearch.NewNumericFieldOptions("total_tasks", redisearch.NumericFieldOptions{Sortable: true}))
 
 	list, listErr := client.List()
 	if listErr != nil {
 		log.Fatal("create index error")
 	}
 
-	if !slices.Contains(list, "idx:users") {
+	if !slices.Contains(list, scoreBoardIndexName) {
 		if err := client.CreateIndex(schema); err != nil {
 			log.Fatal("create index error")
 		}
 	}
 
-	UsersIndex = *client
+	ScoreBoardIndex = *client
 }

@@ -3,6 +3,7 @@ package authController
 import (
 	"context"
 	"errors"
+	cacheContoller "github.com/pooya-hajjar/todo/controllers/cache_contoller"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -70,6 +71,8 @@ func Signup(ctx *gin.Context) {
 		})
 		return
 	}
+
+	cacheContoller.AddScoreBoardDocument(newUserid, 0, signUpBody.UserName, signUpBody.Avatar)
 
 	SetAuthCookie(ctx, token)
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	cacheContoller "github.com/pooya-hajjar/todo/controllers/cache_contoller"
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"
 	"net/http"
 	"strconv"
@@ -102,7 +103,7 @@ func UpdateUser(ctx *gin.Context) {
 				apiErrors.HandleValidationError(ctx, validationErr)
 				return
 			}
-			updateUserQ, updateUserErr := models.PostgresDB.Exec(context.Background(), query.UpdateUser, userIdInt, updateBody.UserName, updateBody.Email, updateBody.Status, updateBody.Avatar)
+			_, updateUserErr := models.PostgresDB.Exec(context.Background(), query.UpdateUser, userIdInt, updateBody.UserName, updateBody.Email, updateBody.Status, updateBody.Avatar)
 			if updateUserErr != nil {
 				var pgErr *pgconn.PgError
 				if errors.As(updateUserErr, &pgErr) {
@@ -117,9 +118,18 @@ func UpdateUser(ctx *gin.Context) {
 				})
 				return
 			}
+			intUserId, ok := userId.(int)
+			if !ok {
+				ctx.JSON(http.StatusInternalServerError, gin.H{
+					"message": fmt.Sprintf("server error"),
+				})
+				return
+			}
+
+			cacheContoller.UpdateScoreBoardDocumentUsername(intUserId, updateBody.UserName)
 
 			ctx.JSON(http.StatusOK, gin.H{
-				"message": fmt.Sprintf("%d user updated", updateUserQ.RowsAffected()),
+				"message": fmt.Sprintf("user updated"),
 			})
 			return
 		}

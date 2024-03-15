@@ -24,4 +24,19 @@ CREATE TABLE tasks(
     CONSTRAINT check_times CHECK((start_time IS NOT NULL AND end_time IS NOT NULL) OR (start_time IS NULL AND end_time IS NULL))
 );
 
+
 CREATE INDEX tasks_user_id_idx ON tasks (user_id);
+
+CREATE OR REPLACE FUNCTION get_task_count(user_id INT)
+RETURNS INT AS $$
+DECLARE
+task_count INT;
+BEGIN
+SELECT COUNT(*)
+INTO task_count
+FROM tasks
+WHERE tasks.user_id = get_task_count.user_id AND tasks.deleted_at IS NULL;
+
+RETURN task_count;
+END;
+$$ LANGUAGE plpgsql;

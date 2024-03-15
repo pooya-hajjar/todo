@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	cacheContoller "github.com/pooya-hajjar/todo/controllers/cache_contoller"
 	"net/http"
 	"strconv"
 
@@ -41,8 +42,11 @@ func AddTask(ctx *gin.Context) {
 			return
 		}
 
-		_, insertTaskErr := models.PostgresDB.Exec(context.Background(), query.AddTask, userId, addTaskBody.Title, zeronull.Int4(addTaskBody.Priority), zeronull.Text(addTaskBody.StartTime), zeronull.Text(addTaskBody.EndTime))
+		var userTaskCount int
 
+		insertTaskQ := models.PostgresDB.QueryRow(context.Background(), query.AddTask, userId, addTaskBody.Title, zeronull.Int4(addTaskBody.Priority), zeronull.Text(addTaskBody.StartTime), zeronull.Text(addTaskBody.EndTime))
+
+		insertTaskErr := insertTaskQ.Scan(&userTaskCount)
 		if insertTaskErr != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(insertTaskErr, &pgErr) {
@@ -59,6 +63,10 @@ func AddTask(ctx *gin.Context) {
 				})
 				return
 			}
+		}
+
+		if intUserId, ok := userId.(int); ok {
+			cacheContoller.UpdateScoreBoardDocumentTasks(intUserId, userTaskCount)
 		}
 
 		ctx.JSON(http.StatusCreated, gin.H{
@@ -179,9 +187,11 @@ func DeleteTask(ctx *gin.Context) {
 				"message": "task id should be number",
 			})
 		}
+		getTaskQ := models.PostgresDB.QueryRow(context.Background(), query.DeleteTask, taskIdInt, userId)
 
-		getTaskQ, deleteTaskErr := models.PostgresDB.Exec(context.Background(), query.DeleteTask, taskIdInt, userId)
+		var userTaskCount int
 
+		deleteTaskErr := getTaskQ.Scan(&userTaskCount)
 		if deleteTaskErr != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(deleteTaskErr, &pgErr) {
@@ -197,8 +207,18 @@ func DeleteTask(ctx *gin.Context) {
 			return
 		}
 
+		intUserId, ok := userId.(int)
+		if !ok {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": fmt.Sprintf("server error"),
+			})
+			return
+		}
+
+		cacheContoller.UpdateScoreBoardDocumentTasks(intUserId, userTaskCount)
+
 		ctx.JSON(http.StatusOK, gin.H{
-			"message": fmt.Sprintf("%d task deleted", getTaskQ.RowsAffected()),
+			"message": fmt.Sprintf("task deleted"),
 		})
 		return
 	}
