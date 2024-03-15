@@ -34,3 +34,19 @@ func GetAuthCookie(ctx *gin.Context) string {
 	return token[len("Bearer "):]
 
 }
+
+func RemoveAuthCookie(ctx *gin.Context) {
+	expiration := time.Unix(0, 0) // Expires in 7 days
+	cookie := http.Cookie{
+		Name:     "auth",
+		Value:    "",
+		Expires:  expiration,
+		Path:     "/",
+		Domain:   "localhost",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteStrictMode, // Adjust as necessary
+	}
+
+	ctx.SetCookie(cookie.Name, cookie.Value, cookie.MaxAge, cookie.Path, cookie.Domain, cookie.Secure, cookie.HttpOnly)
+}

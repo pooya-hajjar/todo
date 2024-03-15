@@ -136,3 +136,10 @@ func SignIn(ctx *gin.Context) {
 	})
 
 }
+
+func LogOut(ctx *gin.Context) {
+	RemoveAuthCookie(ctx)
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}

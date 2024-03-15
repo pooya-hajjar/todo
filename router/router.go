@@ -24,6 +24,7 @@ func Init() *gin.Engine {
 	authGroup.POST("signin", authController.SignIn)
 	authGroup.POST("/google-login", authController.GoogleLogin)
 	authGroup.POST("/google-callback", authController.GoogleCallback)
+	authGroup.POST("/google-callback", authController.LogOut)
 
 	tasksGroup.POST("/add", tasksController.AddTask)
 	tasksGroup.GET("/get", tasksController.GetTasks)

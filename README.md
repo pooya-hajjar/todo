@@ -42,7 +42,8 @@ GET    /
 POST   /auth/signup                          username:string password:string avatar?:string
 POST   /auth/signin                          username:string password:string
 POST   /auth/google-login      
-POST   /auth/google-callback   
+POST   /auth/google-callback 
+POST   /auth/logout  
 GET    /user/info                
 GET    /user/search/:id      
 PUT    /user/update                          username:string password:string avatar?:string status?:int  
