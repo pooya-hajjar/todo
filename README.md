@@ -21,6 +21,7 @@ Put your variables in that file
 ```env
 APP_PORT=3000
 POSTGRES_DSN=postgres://postgres:<YOUR_PASSWORD>@localhost:5432/todo_app
+REDIS_URL=redis://Redis:@localhost:6379/0?protocol=3
 JWT_SECRET_KEY=WhatsUpMan
 
 GOOGLE_CLIENT_ID=<YOUR_CLIENT_ID>
