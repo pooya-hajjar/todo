@@ -21,6 +21,7 @@ func ConnectToRedis(wg *sync.WaitGroup) {
 	}
 
 	rdb := redis.NewClient(url)
+	connectToRedisSearch()
 
 	RedisDb = *rdb
 }
