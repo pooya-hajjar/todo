@@ -59,4 +59,4 @@ PATCH  /tasks/update/:id                     ?status=int
 ````
 
 ## todo
-- [ ] add cache system
+- [x] add cache system
