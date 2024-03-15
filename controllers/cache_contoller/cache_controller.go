@@ -3,9 +3,10 @@ package cacheContoller
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/pooya-hajjar/todo/models"
-	"log"
 )
 
 func AddScoreBoardDocument(id, totalTasks int, username, avatar string) {

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/pooya-hajjar/todo/config"
 	"log"
 	"os"
+
+	"github.com/pooya-hajjar/todo/config"
 
 	tasksController "github.com/pooya-hajjar/todo/controllers/tasks_controller"
 	apiErrors "github.com/pooya-hajjar/todo/utils/api_errors"

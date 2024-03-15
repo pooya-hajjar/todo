@@ -3,8 +3,9 @@ package authController
 import (
 	"context"
 	"errors"
-	cacheContoller "github.com/pooya-hajjar/todo/controllers/cache_contoller"
 	"net/http"
+
+	cacheContoller "github.com/pooya-hajjar/todo/controllers/cache_contoller"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"

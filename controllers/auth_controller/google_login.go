@@ -4,16 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pooya-hajjar/todo/config"
 	"github.com/pooya-hajjar/todo/constants/query"
 	"github.com/pooya-hajjar/todo/models"
 	"golang.org/x/crypto/bcrypt"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
 )
 
 type UserData struct {

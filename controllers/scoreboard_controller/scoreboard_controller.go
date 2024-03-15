@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/pooya-hajjar/todo/constants/query"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pooya-hajjar/todo/models"

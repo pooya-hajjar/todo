@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var reqCount = flag.Int("req-count", 1000, "")

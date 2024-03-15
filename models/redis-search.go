@@ -2,11 +2,12 @@ package models
 
 import (
 	"fmt"
-	"github.com/RediSearch/redisearch-go/redisearch"
 	"log"
 	"net/url"
 	"os"
 	"slices"
+
+	"github.com/RediSearch/redisearch-go/redisearch"
 )
 
 const scoreBoardIndexName = "idx:scoreboard"
