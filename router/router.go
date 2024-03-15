@@ -37,7 +37,7 @@ func Init() *gin.Engine {
 	userGroup.PUT("/update", userController.UpdateUser)
 	userGroup.GET("/search/:id", userController.SearchUser)
 
-	rt.GET("/top_ten", permissions.CheckUserAccess, scoreboardController.Top10)
+	rt.GET("/top_ten", scoreboardController.Top10)
 
 	return rt
 }
