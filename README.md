@@ -48,7 +48,7 @@ POST   /auth/google-callback
 POST   /auth/logout  
 GET    /user/info                
 GET    /user/search/:id      
-PUT    /user/update                          username:string password:string avatar?:string status?:int  
+PUT    /user/update                          username:string email?:string avatar?:string status?:int  
 GET    /top_ten      
 GET    /tasks/get               
 GET    /tasks/get/:id                        
