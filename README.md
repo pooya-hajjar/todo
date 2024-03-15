@@ -1,7 +1,8 @@
 # mvc todo app
 
 ## prerequisites
-* todo_app database in postgres
+* todo_app database in Postgres
+* one of the Redis Search or Redis Stack servers that is running
 
 ## usage
 
