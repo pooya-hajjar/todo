@@ -26,7 +26,8 @@ func connectToRedisSearch() {
 
 	schema := redisearch.NewSchema(redisearch.DefaultOptions).
 		AddField(redisearch.NewTextFieldOptions("username", redisearch.TextFieldOptions{Weight: 3.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("email", redisearch.TextFieldOptions{Weight: 1.0})).
+		AddField(redisearch.NewTextFieldOptions("avatar", redisearch.TextFieldOptions{Weight: 1.0})).
+		AddField(redisearch.NewNumericFieldOptions("status", redisearch.NumericFieldOptions{Sortable: true})).
 		AddField(redisearch.NewNumericFieldOptions("total_tasks", redisearch.NumericFieldOptions{Sortable: true})).
 		AddField(redisearch.NewNumericFieldOptions("today_tasks", redisearch.NumericFieldOptions{Sortable: true}))
 
