@@ -103,7 +103,7 @@ func UpdateUser(ctx *gin.Context) {
 				apiErrors.HandleValidationError(ctx, validationErr)
 				return
 			}
-			_, updateUserErr := models.PostgresDB.Exec(context.Background(), query.UpdateUser, userIdInt, updateBody.UserName, updateBody.Email, updateBody.Status, updateBody.Avatar)
+			_, updateUserErr := models.PostgresDB.Exec(context.Background(), query.UpdateUser, userIdInt, updateBody.UserName, responseHelper.NilOrValue(updateBody.Email), updateBody.Status, updateBody.Avatar)
 			if updateUserErr != nil {
 				var pgErr *pgconn.PgError
 				if errors.As(updateUserErr, &pgErr) {

@@ -26,7 +26,7 @@ func UpdateScoreBoardDocumentTasks(id, totalTasks int) {
 	DocName := fmt.Sprintf("user:%d", id)
 
 	intCmd := models.RedisDb.HSet(context.Background(), DocName, "total_tasks", totalTasks)
-	result, err := intCmd.Result()
+	_, err := intCmd.Result()
 	if err != nil {
 		log.Fatal("redis error")
 	}

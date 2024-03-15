@@ -55,6 +55,7 @@ func readFromRedis(ctx *gin.Context) error {
 	ctx.JSON(http.StatusOK, gin.H{
 		"top_ten": docsMapArr,
 	})
+	return nil
 }
 
 func readFromMainDB(ctx *gin.Context) {
