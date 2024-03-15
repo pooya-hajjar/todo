@@ -60,4 +60,5 @@ PATCH  /tasks/update/:id                     ?status=int
 
 ## todo
 - [x] add cache system
+- [ ] add change password controller
 - [ ] use user and task Statuses
