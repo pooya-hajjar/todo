@@ -31,7 +31,10 @@ func GetAuthCookie(ctx *gin.Context) string {
 			"message": "unauthorized",
 		})
 	}
-	return token[len("Bearer "):]
+	if len(token) > 8 {
+		return token[len("Bearer "):]
+	}
+	return ""
 
 }
 
