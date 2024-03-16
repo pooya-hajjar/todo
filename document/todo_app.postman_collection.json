@@ -11,7 +11,17 @@
 			"name": "root",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				}
 			},
 			"response": []
 		},
@@ -19,31 +29,22 @@
 			"name": "scoreboard",
 			"request": {
 				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "get tasks",
-			"request": {
-				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/tasks/get",
+					"raw": "localhost:3000/top_ten",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
-						"tasks",
-						"get"
+						"top_ten"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "get task",
+			"name": "get tasks",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -62,16 +63,36 @@
 			"response": []
 		},
 		{
+			"name": "get task",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/tasks/get/20",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"tasks",
+						"get",
+						"20"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "search user",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/user/search/1",
+					"raw": "localhost:3000/user/search/1",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"user",
 						"search",
@@ -87,11 +108,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/user/info",
+					"raw": "localhost:3000/user/info",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"user",
 						"info"
@@ -115,11 +136,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:4000/auth/signup",
+					"raw": "localhost:3000/auth/signup",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"auth",
 						"signup"
@@ -135,7 +156,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\" : \"mamad\",\n    \"password\" : \"12345678\"\n}",
+					"raw": "{\n    \"username\" : \"mamadam\",\n    \"password\" : \"12345678\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -143,11 +164,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:4000/auth/signin",
+					"raw": "localhost:3000/auth/signin",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"auth",
 						"signin"
@@ -190,11 +211,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:4000/auth/google-login",
+					"raw": "localhost:3000/auth/google-login",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"auth",
 						"google-login"
@@ -210,7 +231,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\" : \"workout\",\n    \"priority\" : 2,\n    \"start_time\" : \"2023-11-11 10:30\",\n    \"end_time\" : \"2023-11-11 10:30\"\n}",
+					"raw": "{\n    \"title\" : \"gym mand\",\n    \"priority\" : 2\n    \n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -218,11 +239,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:4000/tasks/add",
+					"raw": "localhost:3000/tasks/add",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"tasks",
 						"add"
@@ -238,7 +259,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\" : \"mmdalireza\",\n    \"avatar\" : \"123.jpg\"\n}",
+					"raw": "{\n    \"username\" : \"mamadam\",\n    \"status\" : 3\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -265,11 +286,11 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/tasks/update/23?status=-2",
+					"raw": "localhost:3000/tasks/update/23?status=-2",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"tasks",
 						"update",
@@ -291,11 +312,11 @@
 				"method": "PATCH",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/tasks/update/23?title=workout",
+					"raw": "localhost:3000/tasks/update/23?title=workout",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"tasks",
 						"update",
@@ -317,11 +338,11 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:4000/tasks/delete/25",
+					"raw": "localhost:3000/tasks/delete/25",
 					"host": [
 						"localhost"
 					],
-					"port": "4000",
+					"port": "3000",
 					"path": [
 						"tasks",
 						"delete",
